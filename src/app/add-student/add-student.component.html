@@ -1,0 +1,213 @@
+<div class="container">
+    <div class="row">
+        <div class="col-9 mt-5">
+
+            <form [formGroup]="studentForm" (ngSubmit)="onSubmit()">
+
+                <!-- --name-- -->
+                <div class="mb-3">
+                    <div class="row">
+                        <div class="col-3">
+                            <label for="name" class="form-label">Name:</label>
+                        </div>
+                        <div class="col-8">
+                            <input type="name" class="form-control" id="name" formControlName="name">
+                            <span *ngIf="!studentForm.get('name').valid && studentForm.get('name').touched"
+                                class="help-block text-danger">Enter valid Name.</span>
+                        </div>
+                    </div>
+ <!-- --email-- -->
+
+                </div>
+                <div class="mb-3">
+                    <div class="row">
+                        <div class="col-3">
+                            <label for="email" class="form-label">Email:</label>
+                        </div>
+                        <div class="col-8">
+                            <input type="email" class="form-control" id="exampleInputEmail1" formControlName="email">
+                            <span *ngIf="!studentForm.get('email').valid && studentForm.get('email').touched"
+                                class="help-block text-danger">Enter valid Email.</span>
+                        </div>
+                    </div>
+                </div>
+
+
+ <!-- --phone number-- -->
+
+                <!-- <div class="mb-3">
+                    <div class="row">
+                        <div class="col-3">
+                            <label for="phno" class="form-label">Phone No.:</label>
+                        </div>
+                        <div class="col-8">
+                            <input type="number" class="form-control" id="phno" formControlName="phNo">
+                            <span *ngIf="!studentForm.get('phNo').valid && studentForm.get('phNo').touched"
+                                class="help-block text-danger">Enter valid Phone No.</span>
+                        </div>
+                    </div>
+                </div> -->
+
+                <div class="mb-3">
+                    <div class="row">
+                        <div class="col-3">
+                            <label for="phno" class="form-label">Phone No.:</label>
+                        </div>
+                        <div class="col-8">
+
+                            <select id="selectid" class="mb-3" #code (change)="onCode(code.value)">
+                                <!-- <option [ngValue]="null">Country </option> -->
+                                <option *ngFor="let code of countryCodeArr" [value]="code.country">
+                                    {{code.country}}
+                                    ({{code.code}})
+                                </option>
+                            </select>
+                            <input type="number" class="" id="phno" formControlName="phNo">
+                            <span *ngIf="!studentForm.get('phNo')?.valid && studentForm.get('phNo')?.touched"
+                                class="help-block text-danger">Enter valid Phone No.</span>
+
+                            <!-- <div class="col-md"> -->
+                            <!-- <div class="form-floating"> -->
+                            <!-- <select class="form-select" id="floatingSelectGrid"
+                                        aria-label="Floating label select example" #code (change)="onCode(code.value)"> -->
+                            <!-- <option selected>Open this select menu</option> -->
+                            <!-- <option value="{{code.code}}" *ngFor="let code of countryCodeArr">
+                                            {{code.country}}
+                                            ({{code.code}})</option> -->
+                            <!-- <option value="2">Two</option> -->
+                            <!-- <option value="3">Three</option> -->
+                            <!-- </select> -->
+
+                            <!-- <span *ngIf="!studentForm.get('phNo')?.valid && studentForm.get('phNo')?.touched"
+                                class="help-block text-danger">Enter valid Phone No.</span> -->
+
+                            <!-- <label for="floatingSelectGrid"
+                                        *ngFor="let code of countryCodeArr">{{code.code}}</label> -->
+                            <!-- </div> -->
+
+                            <!-- </div> -->
+
+                        </div>
+                    </div>
+                </div>
+
+                 <!-- --DOB-- -->
+                <div class="mb-3">
+                    <div class="row">
+                        <div class="col-3">
+                            <label for="dob" class="form-label">DOB:</label>
+                        </div>
+                        <div class="col-8">
+                            <input type="date" class="form-control" id="dob" formControlName="dob">
+                            <span *ngIf="!studentForm.get('dob').valid && studentForm.get('dob').touched"
+                                class="help-block text-danger">Enter valid Date of Birth.</span>
+                        </div>
+                    </div>
+                </div>
+
+
+ <!-- --subject-- -->
+                <div class="mb-3">
+                    <div class="row">
+                        <div class="col-3">
+                            <label for="subject" class="form-label">No. of Subject:</label>
+                        </div>
+                        <div class="col-8">
+                            <select class="mb-3" #no (change)="onSubject(no.value)">
+                                <option value="">Choose No. of Sub.</option>
+                                <option *ngFor="let sub of subjectArr" [value]="sub">
+                                    {{sub}}
+                                </option>
+                            </select>
+
+                        </div>
+                    </div>
+                </div>
+
+ <!-- --input for subject & marks-- -->
+                <div class="mb-3">
+                    <div class="row">
+                        <div class="col-3">
+                        </div>
+                        <div class="col-9">
+                            <div class="col-12" formArrayName="subject">
+                                <div class="form-group">
+                                    <div class="row" *ngFor="let subControl of getControls(); let i = index"
+                                        [formGroupName]="i">
+                                        <div class="col-4">
+                                            <input type="text" placeholder="Enter Subject"
+                                                formControlName="subjectName">
+                                        </div>
+                                        <div class="col-4">
+                                            <input type="number" #marks placeholder="Enter Marks"
+                                                formControlName="marks">
+                                        </div>
+                                        <div class="col-2">
+                                            <!-- <button>Add</button> -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+
+ <!-- --Gender-- -->
+
+                <div class="mb-3">
+                    <div class="row">
+                        <div class="col-3">
+                            <label for="dob" class="form-label">Gender:</label>
+                        </div>
+                        <div class="col-8">
+                            <!-- <div class="radio" *ngFor="let gender of gender">
+                                <label for="">
+                                    <input type="radio" name="" id="" [value]="gender"
+                                        formControlName="gender">{{gender}}
+                                </label> -->
+                            <!-- </div> -->
+                            <input type="radio" formControlName="gender" value="male"> Male
+                            <input type="radio" formControlName="gender" value="female"> Female
+                        </div>
+                    </div>
+                </div>
+
+
+
+ <!-- --semester-- -->
+
+                <div class="mb-3">
+                    <div class="row">
+                        <div class="col-3">
+                            <label for="semester" class="form-label">Semester:</label>
+                        </div>
+                        <div class="col-8">
+
+                            <select id="selectid" class="mb-3" (change)="onSemester()" formControlName="semester">
+                                <option *ngFor="let sem of semesterArr" [value]="sem.semester">
+                                    {{sem.semester}}
+                                </option>
+                            </select>
+
+                        </div>
+                    </div>
+                </div>
+
+
+
+ <!-- --terms & conditions-- -->
+
+                <div class="mb-3 form-check">
+                    <input type="checkbox" class="form-check-input" id="exampleCheck1" formControlName="condition">
+                    <label class="form-check-label" for="exampleCheck1">agree terms & conditions</label>
+                </div>
+
+                 <!-- --submit button-- -->
+                <button type="submit" class="btn submit" [disabled]="!studentForm.valid" >{{editMode ? 'Update' :
+                    'Add'}}</button>
+            </form>
+        </div>
+    </div>
+</div>
