@@ -13,7 +13,7 @@ count: number;
   ngOnInit(): void {
 
     // --student count
-this.count = this.stuService.getData.length;
+
 this.stuService.dataChanged.subscribe((len) => {
   this.count = len.length;
 })

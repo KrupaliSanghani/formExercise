@@ -7,24 +7,26 @@ import { BehaviorSubject } from 'rxjs';
 export class StudentInfoService {
   
  
-  // studentData = new BehaviorSubject({});
+  studentData = new BehaviorSubject({});
+  listLength = new BehaviorSubject<number>(1);
   dataChanged = new BehaviorSubject<any[]>([]);
-  startedEditing = new BehaviorSubject<number>(null);
+  startedEditing = new BehaviorSubject({});
+  deletedData = new BehaviorSubject([]);
 
   studentInfoArr = [];
 
   constructor() { }
 
-  getData(){
-    return this.studentInfoArr.slice();
-  }
+  // getData(){
+  //   return this.studentInfoArr.slice();
+  // }
 
+
+  // --edit--
   getInfo(index: number){
+    console.log(this.startedEditing);
     return this.studentInfoArr[index];
   }
-
-
-
 
   setData(data){
     console.log(this.startedEditing);
@@ -34,15 +36,12 @@ this.dataChanged.next(this.studentInfoArr.slice());
 console.log(this.studentInfoArr);
   }
 
-
-
   updateData(index: number, data){
     this.studentInfoArr[index] = data
     this.dataChanged.next(this.studentInfoArr.slice());
   }
-  deleteIngredient(index: number) {
-    this.studentInfoArr.splice(index, 1);
-    this.dataChanged.next(this.studentInfoArr.slice());
-  }
+
+
+  
 
 }

@@ -1,7 +1,7 @@
 <div class="container">
     <div class="row">
         <div class="col-9 mt-5">
-
+<h3 class="mb-4">Student Form</h3>
             <form [formGroup]="studentForm" (ngSubmit)="onSubmit()">
 
                 <!-- --name-- -->
@@ -66,27 +66,6 @@
                             <span *ngIf="!studentForm.get('phNo')?.valid && studentForm.get('phNo')?.touched"
                                 class="help-block text-danger">Enter valid Phone No.</span>
 
-                            <!-- <div class="col-md"> -->
-                            <!-- <div class="form-floating"> -->
-                            <!-- <select class="form-select" id="floatingSelectGrid"
-                                        aria-label="Floating label select example" #code (change)="onCode(code.value)"> -->
-                            <!-- <option selected>Open this select menu</option> -->
-                            <!-- <option value="{{code.code}}" *ngFor="let code of countryCodeArr">
-                                            {{code.country}}
-                                            ({{code.code}})</option> -->
-                            <!-- <option value="2">Two</option> -->
-                            <!-- <option value="3">Three</option> -->
-                            <!-- </select> -->
-
-                            <!-- <span *ngIf="!studentForm.get('phNo')?.valid && studentForm.get('phNo')?.touched"
-                                class="help-block text-danger">Enter valid Phone No.</span> -->
-
-                            <!-- <label for="floatingSelectGrid"
-                                        *ngFor="let code of countryCodeArr">{{code.code}}</label> -->
-                            <!-- </div> -->
-
-                            <!-- </div> -->
-
                         </div>
                     </div>
                 </div>
@@ -113,9 +92,10 @@
                             <label for="subject" class="form-label">No. of Subject:</label>
                         </div>
                         <div class="col-8">
-                            <select class="mb-3" #no (change)="onSubject(no.value)">
-                                <option value="">Choose No. of Sub.</option>
-                                <option *ngFor="let sub of subjectArr" [value]="sub">
+                            <select class="mb-3 custom-select dropdownSelector" formControlName="subNo" #no (change)="onSubject(no.value)">
+                              
+                                <option  *ngFor="let sub of [1,2,3]" value={{sub}}>
+                                  
                                     {{sub}}
                                 </option>
                             </select>
@@ -124,7 +104,7 @@
                     </div>
                 </div>
 
- <!-- --input for subject & marks-- -->
+ <!-- --input for subjects & marks-- -->
                 <div class="mb-3">
                     <div class="row">
                         <div class="col-3">
@@ -135,12 +115,16 @@
                                     <div class="row" *ngFor="let subControl of getControls(); let i = index"
                                         [formGroupName]="i">
                                         <div class="col-4">
-                                            <input type="text" placeholder="Enter Subject"
+                                            <input type="text" class="mb-1" placeholder="Enter Subject"
                                                 formControlName="subjectName">
+                                                <span class="mb-1" *ngIf="!subControl.get('subjectName').valid && subControl.get('subjectName').touched"
+                                                class="help-block text-danger">Enter valid Subject Name</span>
                                         </div>
                                         <div class="col-4">
-                                            <input type="number" #marks placeholder="Enter Marks"
+                                            <input type="number" class="mb-1" #marks placeholder="Enter Marks"
                                                 formControlName="marks">
+                                                <span class="mb-1"  *ngIf="!subControl.get('marks').valid && subControl.get('marks').touched"
+                                                class="help-block text-danger">Enter valid Marks.</span>
                                         </div>
                                         <div class="col-2">
                                             <!-- <button>Add</button> -->
@@ -185,7 +169,7 @@
                         </div>
                         <div class="col-8">
 
-                            <select id="selectid" class="mb-3" (change)="onSemester()" formControlName="semester">
+                            <select id="selectid" class="mb-3" formControlName="semester">
                                 <option *ngFor="let sem of semesterArr" [value]="sem.semester">
                                     {{sem.semester}}
                                 </option>

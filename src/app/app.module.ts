@@ -8,6 +8,7 @@ import { AddStudentComponent } from './add-student/add-student.component';
 import { ListStudentComponent } from './list-student/list-student.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { FilterPipe } from './filter.pipe';
+import { UsernameValidator } from './username.validator';
 
 @NgModule({
   declarations: [

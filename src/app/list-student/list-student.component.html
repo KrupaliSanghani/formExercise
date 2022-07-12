@@ -1,12 +1,18 @@
 <div class="containe">
     <div class="row">
+<!-- --search-- -->
+        <div>
+            <input type="text" class="form-control" name="enrollment" >
+        </div>
+
+      <!-- list of student data -->
         <div class="col-12">
             <table class="table table-striped">
                 <thead>
                   <tr>
                     <th scope="col" >Enrollment ID
                     </th>
-                    <th scope="col" (click)="sortData('name')">Name 
+                    <th scope="col" class="tableHeader" (click)="sortData('name')">Name 
                          <svg *ngIf="isDesc" xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                         fill="currentColor" class="bi bi-sort-alpha-down-alt" viewBox="0 0 16 16">
                         <path
@@ -29,7 +35,7 @@
 
 
 
-                    <th scope="col" (click)="sortData('email')">Email
+                    <th scope="col" class="tableHeader" (click)="sortData('email')">Email
                         <svg *ngIf="Email" xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                         fill="currentColor" class="bi bi-sort-alpha-down-alt" viewBox="0 0 16 16">
                         <path
@@ -55,7 +61,7 @@
                     <th scope="col">DOB</th>
                     <th scope="col">Gender</th>
 
-                    <th scope="col" (click)="sortData('semester')">Semester
+                    <th scope="col" class="tableHeader" (click)="sortData('semester')">Semester
                         <svg *ngIf="Semester" xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                         fill="currentColor" class="bi bi-sort-alpha-down-alt" viewBox="0 0 16 16">
                         <path
@@ -76,7 +82,7 @@
                 </svg>
 
                     </th>
-                    <th scope="col" (click)="sortData('grade')">Grade
+                    <th scope="col" class="tableHeader" (click)="sortData('grade')">Grade
                         <svg *ngIf="Grade" xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                         fill="currentColor" class="bi bi-sort-alpha-down-alt" viewBox="0 0 16 16">
                         <path
@@ -109,17 +115,20 @@
                             <td>{{data.email}}</td>
                             <td>{{data.phno}}</td>
                             <td>{{data.dob}}</td>
-                            <td>{{data.Gender}}</td>
+                            <td>{{data.gender}}</td>
                             <td>{{data.semester}}</td> 
                             <td>{{data.grade}}</td>
                             <td>
-                                <button (click)="onEdit(i)" class="btn btn-danger">Edit</button>
-                            <button (click)="onDelete()" class="btn btn-danger ms-3">Delete</button>
+                                <button (click)="onEdit(i,data)" class="btn btn-danger">Edit</button>
+                            <button (click)="onDelete(data)" class="btn btn-danger ms-3">Delete</button>
                         </td>
 
                         </tr>
                 </tbody>
               </table>
+
+              <!-- --data not found-- -->
+            <div *ngIf="displayData.length == 0" class="text-center">Data not Found</div>
         </div>
     </div>
 </div>

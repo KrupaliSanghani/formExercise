@@ -1,17 +1,24 @@
-import { Component, OnInit } from '@angular/core';
-import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { FormArray, FormControl, FormGroup, NgForm, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { StudentInfoService } from '../student-info.service';
+// import { UsernameValidator } from '../username.validator';  
 
 @Component({
   selector: 'app-add-student',
   templateUrl: './add-student.component.html',
   styleUrls: ['./add-student.component.css'],
 })
-export class AddStudentComponent implements OnInit {
+export class AddStudentComponent implements OnInit, OnDestroy {
+
+// @ViewChild('') studentForm:NgForm;
+
+
+
   studentForm: FormGroup;
-  editMode: boolean = false;
+  editMode: boolean = true;
   editedItemIndex: number;
+  editedItem;
   subscription: Subscription;
   // editedItem;
   // subject = [];
@@ -20,7 +27,8 @@ export class AddStudentComponent implements OnInit {
   student = [];
   avg: number;
   grade : string;
-  en: number;
+  en: number = Math.floor(100000000000 + Math.random() * 9000);
+
 
   // --semester Array--
 
@@ -35,7 +43,7 @@ export class AddStudentComponent implements OnInit {
 
     // --semester Array--
 
-  subjectArr = [1, 2, 3];
+  // subjectArr = [1, 2, 3];
 
 
 // --country Array
@@ -52,36 +60,38 @@ export class AddStudentComponent implements OnInit {
   
   ngOnInit(): void {
 
-    // this.subscription = this.stu.startedEditing.subscribe(
-    //   (index: number) => {
-    //     this.editedItemIndex = index;
-    //     this.editMode = true;
-    //     this.editedItem = this.stu.getInfo(index);
-    //     this.studentForm.setValue({
-    //       name: this.editedItem.name,
-    //       email: this.editedItem.email,
-    //       phNo: this.editedItem.phNo,
-    //       dob: this.editedItem.dob,
-    //       gender: this.editedItem.gender,
-    //       subject: this.editedItem.subject,
-    //       semester: this.editedItem.semester,
-    //       condition: this.editedItem.condition,
-    //       // name: this.editedItem.name,
-         
-    //     //   // console.log(Name);
-    //     //   // amount: this.editedItem.amount
+    // --delete data--
+    this.stu.deletedData.subscribe((e) => {
+      this.student = e;
+      console.log(this.student);
+    })
+    console.log(this.stu.deletedData);
 
-    //     })
-    //     console.log(this.editedItem.name);
-    //   }
-    // );
+    // --edit data--
+  this.subscription =  this.stu.startedEditing.subscribe(
+    (val) => {
+       this.editMode = false;
+       console.log(val);
+       this.editedItem = val;
+       console.log(this.editedItem);
+
+       this.studentForm.patchValue({
+        name: this.editedItem.name
+       });
+     
+    }
+  );
+
+        console.log(this.editedItem.name);
+        
 
     this.studentForm = new FormGroup({
-      name: new FormControl(null, Validators.required),
+      name: new FormControl(null, [Validators.required,Validators.pattern('^[a-zA-Z]*')]),
       email: new FormControl(null, [Validators.required, Validators.email]),
       phNo: new FormControl(null, Validators.required),
-      dob: new FormControl(null, Validators.required),
+      dob: new FormControl(null, [Validators.required]),
       gender: new FormControl(null, Validators.required),
+      subNo : new FormControl(null, Validators.required),
       subject: new FormArray([]),
       semester: new FormControl(null, Validators.required),
       condition: new FormControl(null, Validators.required),
@@ -92,35 +102,35 @@ export class AddStudentComponent implements OnInit {
 
 
 
-  onSemester() {}
+//   validDate(control: FormControl){
+//     let dateArr = [];
+//     let dataArr = [];
+//     var today = new Date();
+//    let year = today.getFullYear();
+//    let month = today.getMonth();
+//    let day = today.getDate();
+// if(year == splitDate[0] && month == splitDate[1] - 1 && day == splitDate[2]){}
+//   }
+
+
+
+ngOnDestroy(){
+this.subscription.unsubscribe();
+}
 
   onSubmit() {
 
-    //--for random digit
-    console.log(Math.random() * 100);
-for(let id= 1;id < 5; id++){
-  this.en = Math.floor(100000000000 + Math.random() * 9000);
-  console.log(this.en);
-}
-
-
-
 // --for marks--
-    console.log(this.studentForm.get('subject').value);
-    let arr = this.studentForm.get('subject').value;
-    console.log(arr);
-    let mark = arr.map((e) => e.marks);
-    console.log(mark);
-
     let sum = 0;
-    if(mark.length !== 0){
-      for (let m=0; m < mark.length; m++) {
-        // console.log(b.length);
-        sum = sum + mark[m];
+    if((this.studentForm.get('subject').value).map((e) => e.marks).length !== 0){
+      for (let m=0; m < (this.studentForm.get('subject').value).map((e) => e.marks).length; m++) {
+ 
+        sum = sum + (this.studentForm.get('subject').value).map((e) => e.marks)[m];
         console.log(sum);
-        // console.log(b[0]);
       }
-       this.avg = sum/mark.length;
+
+      // --average of marks--
+       this.avg = sum/(this.studentForm.get('subject').value).map((e) => e.marks).length;
       console.log(this.avg);
     }
 
@@ -147,20 +157,26 @@ this.studentInfo = {
   dob : this.studentForm.get('dob').value,
   gender: this.studentForm.get('gender').value,
   semester: this.studentForm.get('semester').value,
-  grade: this.grade
+  subject: this.studentForm.get('subject').value,
+  grade: this.grade,
+  subNo: this.studentForm.get('subNo').value
  }
 
+ console.log(this.studentInfo);
 
 if(this.editMode){
   this.stu.updateData(this.editedItemIndex,this.student);
   console.log(this.editMode);
+  this.studentForm.reset();
 }
 else{
   this.student.push(this.studentInfo);
   console.log(this.student);
+  this.stu.dataChanged.next(this.student);
   // this.stu.studentData.next(this.student);
-  this.stu.setData(this.studentInfo);
-  console.log(this.editMode);
+  // this.stu.setData(this.student);
+  // console.log(this.editMode);
+  this.studentForm.reset();
 }
   
   }
@@ -168,38 +184,16 @@ else{
   // --subject input field
 
   onSubject(val) {
-    if ((<FormArray>this.studentForm.get('subject')).length == 0) {
+    console.log(val);
+    (<FormArray>this.studentForm.get('subject')).clear();
       for (let i = 1; i <= val; i++) {
         (<FormArray>this.studentForm.get('subject')).push(
           new FormGroup({
-            subjectName: new FormControl(null, Validators.required),
-            marks: new FormControl(null, [Validators.required]),
+            subjectName: new FormControl(null, [Validators.required,Validators.pattern('^[a-zA-Z]*')]),
+            marks: new FormControl(null, [Validators.required,Validators.pattern('^0*(?:[1-9][0-9]?|100)$')]),
           })
         );
-      }
-    } else {
-      let length = (<FormArray>this.studentForm.get('subject')).length;
-      let sum = val - length;
-      console.log(sum);
-
-      if (sum > 0) {
-        for (let i = 1; i <= sum; i++) {
-          (<FormArray>this.studentForm.get('subject')).push(
-            new FormGroup({
-              subjectName: new FormControl(null, Validators.required),
-              marks: new FormControl(null, [Validators.required]),
-            })
-          );
         }
-      } else {
-        console.log(sum);
-        let pos = Math.abs(sum);
-        for (let k = 1; k <= pos; k++) {
-          console.log((<FormArray>this.studentForm.get('subject')).removeAt(0));
-          (<FormArray>this.studentForm.get('subject')).removeAt(4);
-        }
-      }
-    }
   }
 
   // --for subject & marks

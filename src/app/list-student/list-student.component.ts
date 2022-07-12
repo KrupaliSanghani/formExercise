@@ -22,27 +22,29 @@ export class ListStudentComponent implements OnInit {
 
   ngOnInit(): void {
 
-this.displayData = this.stu.getData();
+// this.displayData = this.stu.getData();
 this.subscription = this.stu.dataChanged.subscribe((data) => {
   this.displayData = data;
 }
 );
 
 
-// this.stu.studentData.subscribe((data) => {
-// this.displayData.push(data);
-// // this.displayData = data;
-//    });
-//    console.log(this.displayData);
   }
 
 // --for edit
-  onEdit(index: number){
-    // this.stu.startedEditing.next(index);
+  onEdit(i,val){
+    // console.log(val);
+    this.stu.startedEditing.next(i);
+    this.stu.startedEditing.next(val);
   }
 
   // --for delete
-  onDelete(){
+  onDelete(val){
+
+this.displayData.splice(val,1);
+this.stu.dataChanged.next(this.displayData);
+console.log(this.displayData.length);
+this.stu.deletedData.next(this.displayData);
 
   }
 
@@ -54,7 +56,7 @@ this.subscription = this.stu.dataChanged.subscribe((data) => {
   sortData(property: string) {
     let direction: number;
 
-    property == 'Name' ? (this.isDesc = !this.isDesc,direction = this.isDesc ? 1 : -1) : (property == 'Email' ? (this.Email = !this.Email, direction = this.Email ? 1 : -1) :  (property == 'Semester' ? (this.Semester = !this.Semester, direction = this.Semester ? 1 : -1) : (this.Grade = !this.Grade, direction = this.Grade ? 1 : -1)));
+    property == 'name' ? (this.isDesc = !this.isDesc,direction = this.isDesc ? 1 : -1) : (property == 'email' ? (this.Email = !this.Email, direction = this.Email ? 1 : -1) :  (property == 'semester' ? (this.Semester = !this.Semester, direction = this.Semester ? 1 : -1) : (this.Grade = !this.Grade, direction = this.Grade ? 1 : -1)));
 
 
 console.log('sort');
@@ -63,10 +65,10 @@ console.log('sort');
     // let direction = this.isDesc ? 1 : -1;
     this.displayData.sort(function (a, b) {
       if (a[property] < b[property]) {
-        return -1 * this.direction;
+        return -1 * direction;
       }
       else if (a[property] > b[property]) {
-        return 1 * this.direction;
+        return 1 * direction;
       }
       else {
         return 0;
