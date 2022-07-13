@@ -1,9 +1,34 @@
 <div class="containe">
     <div class="row">
 <!-- --search-- -->
-        <!-- <div>
-            <input type="text" class="form-control" name="enrollment" >
-        </div> -->
+<div class="col-8">
+    <div class="row">
+        <div class="col-6">
+            <input type="text" class="form-control mt-2" placeholder="Search by Name, Email, Enroll No., Phone No." name="enrollment" [(ngModel)]="filtered">
+        </div>
+    </div>
+ 
+</div>
+
+   <!-- filter by grade--> 
+       <div class="col-4">
+     
+                <div>
+                    <label class="fw-bold">Filter by grade:</label>
+                </div>
+         
+                <select class="mb-5" #Grade (change)="onGrade(Grade.value)">
+                    <option value='All'>All</option>
+                    <option *ngFor="let grade of ['A','B','C','D','E','F']" > {{ grade }}</option>
+                  </select>
+           
+        </div>
+        
+
+       
+  
+
+
 
       <!-- list of student data -->
         <div class="col-12">
@@ -109,11 +134,11 @@
                 <tbody>
 
                     <!-- --display student data -->
-                        <tr *ngFor=" let data of displayData; let i = index">
+                        <tr *ngFor=" let data of displayArr | filter:filtered ; let i = index">
                             <td>{{data.enid}}</td>
                             <td>{{data.name}}</td>
                             <td>{{data.email}}</td>
-                            <td>{{data.phno}}</td>
+                            <td>{{data.phNo}}</td>
                             <td>{{data.dob}}</td>
                             <td>{{data.gender}}</td>
                             <td>{{data.semester}}</td> 
@@ -128,7 +153,7 @@
               </table>
 
               <!-- --data not found-- -->
-            <div *ngIf="displayData.length == 0" class="text-center">Data not Found</div>
+            <div *ngIf="displayArr.length == 0" class="text-center">Data not Found</div>
         </div>
     </div>
 </div>

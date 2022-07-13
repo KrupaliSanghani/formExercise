@@ -1,5 +1,5 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { FormArray, FormControl, FormGroup, NgForm, Validators } from '@angular/forms';
+import { Component,  OnInit } from '@angular/core';
+import { FormArray, FormBuilder, FormControl, FormGroup, NgForm, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { StudentInfoService } from '../student-info.service';
 // import { UsernameValidator } from '../username.validator';  
@@ -9,14 +9,11 @@ import { StudentInfoService } from '../student-info.service';
   templateUrl: './add-student.component.html',
   styleUrls: ['./add-student.component.css'],
 })
-export class AddStudentComponent implements OnInit, OnDestroy {
-
-// @ViewChild('') studentForm:NgForm;
-
+export class AddStudentComponent implements OnInit {
 
 
   studentForm: FormGroup;
-  editMode: boolean = true;
+  editMode: boolean = false;
   editedItemIndex: number;
   editedItem;
   subscription: Subscription;
@@ -30,60 +27,19 @@ export class AddStudentComponent implements OnInit, OnDestroy {
   en: number = Math.floor(100000000000 + Math.random() * 9000);
 
 
-  // --semester Array--
-
-  semesterArr = [
-    { id: 1, semester: 1 },
-    { id: 2, semester: 2 },
-    { id: 3, semester: 3 },
-    { id: 4, semester: 4 },
-    { id: 5, semester: 5 },
-    { id: 6, semester: 6 },
-  ];
-
-    // --semester Array--
-
-  // subjectArr = [1, 2, 3];
-
-
 // --country Array
   countryCodeArr = [
     { country: 'India', code: '+91' },
-    { country: 'USA', code: '+1' },
-    // { "country": 'Japan', 'code': '+81' },
+    { country: 'USA', code: '+1' }
   ];
+  mark: any;
 
 
 
-  constructor(private stu: StudentInfoService) {}
+  constructor(private stu: StudentInfoService, private fb: FormBuilder) {}
 
   
   ngOnInit(): void {
-
-    // --delete data--
-    this.stu.deletedData.subscribe((e) => {
-      this.student = e;
-      console.log(this.student);
-    })
-    console.log(this.stu.deletedData);
-
-    // --edit data--
-  this.subscription =  this.stu.startedEditing.subscribe(
-    (val) => {
-       this.editMode = false;
-       console.log(val);
-       this.editedItem = val;
-       console.log(this.editedItem);
-
-       this.studentForm.patchValue({
-        name: this.editedItem.name
-       });
-     
-    }
-  );
-
-        console.log(this.editedItem.name);
-        
 
     this.studentForm = new FormGroup({
       name: new FormControl(null, [Validators.required,Validators.pattern('^[a-zA-Z]*')]),
@@ -97,28 +53,76 @@ export class AddStudentComponent implements OnInit, OnDestroy {
       condition: new FormControl(null, Validators.required),
     });
 
+
+    // --delete data--
+    this.stu.deletedData.subscribe((e) => {
+      this.student = e;
+      console.log(this.student);
+    })
+    console.log(this.stu.deletedData);
+
+
+    // --edit data--
+    this.stu.editMode.subscribe((e) => this.editMode = e);
+    this.stu.index.subscribe( index => { this.editedItemIndex= index;});
+  this.subscription =  this.stu.startedEditing.subscribe(
+    (val) => {
+      //  this.editMode = true;
+       console.log(val);
+       this.editedItem = val;
+       console.log(this.editedItem);
+
+       if(this.editMode){
+          this.studentForm.patchValue({
+        name: this.editedItem.name,
+        email: this.editedItem.email,
+        phNo: this.editedItem.phNo,
+        dob: this.editedItem.dob,
+        gender: this.editedItem.gender,
+        subNo: this.editedItem.subNo,
+        semester: this.editedItem.semester
+
+
+       });
+      }
+
+
+      if(this.editMode == true){
+        console.log(this.editedItem.subject);
+        let editedMark = (this.editedItem.subject).map((e) => e.marks);
+        let editedSub = (this.editedItem.subject).map((e) => e.subjectName)
+
+        // subNo
+        
+        for(let i=0; i <= (this.editedItem.subNo)-1; i++){
+          console.log(editedMark[i]);
+          console.log(editedSub[i]);
+        (<FormArray>this.studentForm.get('subject')).push(
+          new FormGroup({
+            subjectName: new FormControl(editedSub[i], [Validators.required,Validators.pattern('^[a-zA-Z]*')]),
+            marks: new FormControl(editedMark[i], [Validators.required,Validators.pattern('^0*(?:[1-9][0-9]?|100)$')]),
+          })
+        )
+        }
+      }
+
+    }
+  );
+
+        
+
+
     this.onCode('a');
   }
 
 
 
-//   validDate(control: FormControl){
-//     let dateArr = [];
-//     let dataArr = [];
-//     var today = new Date();
-//    let year = today.getFullYear();
-//    let month = today.getMonth();
-//    let day = today.getDate();
-// if(year == splitDate[0] && month == splitDate[1] - 1 && day == splitDate[2]){}
-//   }
-
-
-
-ngOnDestroy(){
-this.subscription.unsubscribe();
-}
 
   onSubmit() {
+
+    // this.mark = (this.studentForm.get('subject').value).map((e) => e.marks);
+    // let m = this.mark.value
+    // console.log(this.mark);
 
 // --for marks--
     let sum = 0;
@@ -153,7 +157,7 @@ this.studentInfo = {
   enid:this.en,
   name: this.studentForm.get('name').value,
   email: this.studentForm.get('email').value,
-  phno: this.studentForm.get('phNo').value,
+  phNo: this.studentForm.get('phNo').value,
   dob : this.studentForm.get('dob').value,
   gender: this.studentForm.get('gender').value,
   semester: this.studentForm.get('semester').value,
@@ -161,22 +165,30 @@ this.studentInfo = {
   grade: this.grade,
   subNo: this.studentForm.get('subNo').value
  }
-
+ 
  console.log(this.studentInfo);
 
-if(this.editMode){
-  this.stu.updateData(this.editedItemIndex,this.student);
+
+
+
+if(this.editMode == true){
+
+  this.student[this.editedItemIndex]=this.studentInfo;
+this.stu.dataChanged.next(this.student);
+
   console.log(this.editMode);
   this.studentForm.reset();
+  this.editMode = false;
+  this.stu.editMode.next(this.editMode);
+  // this.editMode = false;
 }
-else{
+else if(this.editMode == false){
   this.student.push(this.studentInfo);
   console.log(this.student);
   this.stu.dataChanged.next(this.student);
-  // this.stu.studentData.next(this.student);
-  // this.stu.setData(this.student);
-  // console.log(this.editMode);
+ 
   this.studentForm.reset();
+  this.editMode = false;
 }
   
   }

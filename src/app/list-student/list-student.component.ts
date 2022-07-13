@@ -10,47 +10,76 @@ import { StudentInfoService } from '../student-info.service';
 export class ListStudentComponent implements OnInit {
   displayData = [];
   
-  
+  // -- for search--
+  filtered = '';
+
+  // --for edit--
+  editMode: boolean = false;
+
+  // --for sort--
   isDesc: boolean =true;
   Email: boolean = true;
   Grade:boolean = true
   Semester: boolean = true;
-  
+
+  displayArr = [];
   private subscription: Subscription;
 
   constructor(private stu: StudentInfoService ) { }
 
   ngOnInit(): void {
+   
 
-// this.displayData = this.stu.getData();
 this.subscription = this.stu.dataChanged.subscribe((data) => {
   this.displayData = data;
 }
 );
+this.displayArr = this.displayData;
 
 
   }
 
+// --filter by grade--
+  onGrade(val){
+console.log(val);
+val == 'All' ? (this.displayArr = this.displayData) : (this.displayArr = this.displayData.filter(displayData => displayData.grade == val));
+console.log(this.displayArr);
+  }
+
+
+
 // --for edit
   onEdit(i,val){
-    // console.log(val);
-    this.stu.startedEditing.next(i);
+    console.log(val);
+    this.editMode = true
+    this.stu.editMode.next(this.editMode)
     this.stu.startedEditing.next(val);
+    this.stu.index.next(i);
+    this.editMode=false;
   }
 
   // --for delete
   onDelete(val){
+console.log(val);
+for (var i = 0; i < this.displayArr.length; i++) {
 
-this.displayData.splice(val,1);
-this.stu.dataChanged.next(this.displayData);
-console.log(this.displayData.length);
-this.stu.deletedData.next(this.displayData);
+  if (this.displayArr[i] == val) {
+    this.displayArr.splice(i, 1);
+  }
+}
+// this.displayArr.splice(val,1);
+this.stu.dataChanged.next(this.displayArr);
+console.log(this.displayArr.length);
+this.stu.deletedData.next(this.displayArr);
 
   }
 
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
   }
+
+
+
 
   // --sort Data--
   sortData(property: string) {
@@ -60,10 +89,7 @@ this.stu.deletedData.next(this.displayData);
 
 
 console.log('sort');
-    // this.isDesc = !this.isDesc;
-
-    // let direction = this.isDesc ? 1 : -1;
-    this.displayData.sort(function (a, b) {
+    this.displayArr.sort(function (a, b) {
       if (a[property] < b[property]) {
         return -1 * direction;
       }

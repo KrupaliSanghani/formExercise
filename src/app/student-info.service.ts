@@ -12,34 +12,34 @@ export class StudentInfoService {
   dataChanged = new BehaviorSubject<any[]>([]);
   startedEditing = new BehaviorSubject({});
   deletedData = new BehaviorSubject([]);
+  index = new BehaviorSubject<any>(null);
+  editMode = new BehaviorSubject<any>(false);
 
   studentInfoArr = [];
 
   constructor() { }
 
-  // getData(){
-  //   return this.studentInfoArr.slice();
-  // }
+  
 
 
-  // --edit--
-  getInfo(index: number){
-    console.log(this.startedEditing);
-    return this.studentInfoArr[index];
-  }
+//   // --edit--
+//   getInfo(index: number){
+//     console.log(this.startedEditing);
+//     return this.studentInfoArr[index];
+//   }
 
-  setData(data){
-    console.log(this.startedEditing);
-this.studentInfoArr.push(data);
-// this.studentInfoArr = data;
-this.dataChanged.next(this.studentInfoArr.slice());
-console.log(this.studentInfoArr);
-  }
+//   setData(data){
+//     console.log(this.startedEditing);
+// this.studentInfoArr.push(data);
+// // this.studentInfoArr = data;
+// this.dataChanged.next(this.studentInfoArr.slice());
+// console.log(this.studentInfoArr);
+//   }
 
-  updateData(index: number, data){
-    this.studentInfoArr[index] = data
-    this.dataChanged.next(this.studentInfoArr.slice());
-  }
+//   updateData(index: number, data){
+//     this.studentInfoArr[index] = data
+//     this.dataChanged.next(this.studentInfoArr.slice());
+//   }
 
 
   
