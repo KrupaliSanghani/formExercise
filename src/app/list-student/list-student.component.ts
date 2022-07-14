@@ -36,8 +36,8 @@ this.subscription = this.stu.dataChanged.subscribe((data) => {
 }
 );
 this.displayArr = this.displayData;
-
-
+this.editMode = false;
+this.stu.editMode.next(this.editMode);
   }
 
 // --filter by grade--

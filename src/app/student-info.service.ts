@@ -20,12 +20,5 @@ export class StudentInfoService {
 
   constructor() { }
 
-  
-
-
-
-
-
-  
 
 }

@@ -1,3 +1,4 @@
+import { getLocaleDateFormat } from '@angular/common';
 import { Component,  OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, NgForm, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -23,13 +24,11 @@ export class AddStudentComponent implements OnInit {
   // num: number;
   // studentInfo = {};
   student = [];
+  code;
   
 
 // --country Array
-  countryCodeArr = [
-    { country: 'India', code: '+91' },
-    { country: 'USA', code: '+1' }
-  ];
+
   // mark: any;
 
 
@@ -51,6 +50,7 @@ export class AddStudentComponent implements OnInit {
       subject: new FormArray([]),
       semester: new FormControl(null, Validators.required),
       condition: new FormControl(null, Validators.required),
+      code: new FormControl('Select Country', Validators.required)
     });
 
    
@@ -69,7 +69,7 @@ export class AddStudentComponent implements OnInit {
       //  this.editMode = true;
        console.log(val);
        this.editedItem = val;
-       console.log(this.editedItem);
+       console.log(this.editedItem.code);
 
        if(this.editMode){
           this.studentForm.patchValue({
@@ -80,11 +80,28 @@ export class AddStudentComponent implements OnInit {
         gender: this.editedItem.gender,
         subNo: this.editedItem.subNo,
         semester: this.editedItem.semester,
-condition: this.editedItem.condition
+condition: this.editedItem.condition,
+code: this.editedItem.code
 
        });
 
-   
+       this.studentForm.get('phNo').valueChanges.subscribe((phNo) => {
+        if (this.editedItem.code == 'USA (+1)') {
+
+          this.studentForm.get('phNo')
+            .setValidators([
+              Validators.required,
+              Validators.pattern('^((\\+1-?)|0)?[0-9]{12}$'),
+            ]);
+        } else  if(this.editedItem.code == 'India (+91)'){
+          
+           this.studentForm.get('phNo')
+            .setValidators([
+              Validators.required,
+              Validators.pattern('^((\\+91-?)|0)?[0-9]{10}$'),
+            ]);
+        }
+      });
       
 
         console.log(this.editedItem.subject);
@@ -97,7 +114,7 @@ condition: this.editedItem.condition
         (<FormArray>this.studentForm.get('subject')).push(
           new FormGroup({
             subjectName: new FormControl(editedSub[i], [Validators.required,Validators.pattern('^[a-zA-Z0-9]+( [a-zA-Z0-9_]+)*$')]),
-            marks: new FormControl(editedMark[i], [Validators.required,Validators.pattern('^0*(?:[1-9][0-9]?|100)$')]),
+            marks: new FormControl(editedMark[i], [Validators.required,Validators.pattern('^0*(?:[0-9][0-9]?|100)$')]),
           })
         )
         }
@@ -106,13 +123,50 @@ condition: this.editedItem.condition
     }
   );
 
-        
+//   this.studentForm
+//   .get('phNo')
+//   .setValidators([
+//     Validators.required,
+//     Validators.pattern('^((\\+1-?)|0)?[0-9]{12}$'),
+//   ]);
+// } else if(code == 'India'){
+// this.studentForm
+//   .get('phNo')
+//   .setValidators([
+//     Validators.required,
+//     Validators.pattern('^((\\+91-?)|0)?[0-9]{10}$'),
+//   ]);
 
 
-    this.onCode('a');
+    this.onCode(this.code);
   }
 
+  getToday(): string{
+    return new Date().toISOString().split('T')[0];
+  } 
 
+
+  onCode(code) {
+    this.code = code;
+    this.studentForm.get('phNo').valueChanges.subscribe((phNo) => {
+      if (code == 'USA (+1)') {
+        this.studentForm
+          .get('phNo')
+          .setValidators([
+            Validators.required,
+            Validators.pattern('^((\\+1-?)|0)?[0-9]{12}$')
+          ]);
+      } else if(code == 'India (+91)'){
+        this.studentForm
+          .get('phNo')
+          .setValidators([
+            Validators.required,
+            Validators.pattern('^((\\+91-?)|0)?[0-9]{10}$')
+          ]);
+      }
+    });
+    console.log(code);
+  }
 
 
   onSubmit() {
@@ -162,7 +216,8 @@ studentInfo = {
   subject: this.studentForm.get('subject').value,
   grade: grade,
   subNo: this.studentForm.get('subNo').value,
-  condition: this.studentForm.get('condition').value
+  condition: this.studentForm.get('condition').value,
+  code: this.code
  }
  
  console.log(studentInfo);
@@ -202,7 +257,7 @@ this.router.navigate(['list']);
         (<FormArray>this.studentForm.get('subject')).push(
           new FormGroup({
             subjectName: new FormControl(null, [Validators.required,Validators.pattern('^[a-zA-Z0-9]+( [a-zA-Z0-9_]+)*$')]),
-            marks: new FormControl(null, [Validators.required,Validators.pattern('^0*(?:[1-9][0-9]?|100)$')]),
+            marks: new FormControl(null, [Validators.required,Validators.pattern('^0*(?:[0-9][0-9]?|100)$')]),
           })
         );
         }
@@ -215,24 +270,5 @@ this.router.navigate(['list']);
 
 
   // --for country wise validation
-  onCode(code) {
-    this.studentForm.get('phNo').valueChanges.subscribe((phNo) => {
-      if (code == 'USA') {
-        this.studentForm
-          .get('phNo')
-          .setValidators([
-            Validators.required,
-            Validators.pattern('^((\\+1-?)|0)?[0-9]{12}$'),
-          ]);
-      } else if(code == 'India'){
-        this.studentForm
-          .get('phNo')
-          .setValidators([
-            Validators.required,
-            Validators.pattern('^((\\+91-?)|0)?[0-9]{10}$'),
-          ]);
-      }
-    });
-    console.log(code);
-  }
+
 }
