@@ -91,6 +91,9 @@ console.log(this.displayArr.length);
 
 console.log('sort');
     this.displayArr.sort(function (a, b) {
+
+      // a[property] < b[property] ? ( return -1 * direction) : ( a[property] > b[property] ? ( return 1 * direction) : ( return 0)  )
+
       if (a[property] < b[property]) {
         return -1 * direction;
       }

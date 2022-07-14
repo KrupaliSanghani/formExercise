@@ -46,16 +46,10 @@
                             <!-- <select id="selectid" class="mb-3" #code (change)="onCode(code.value)" formControName="code"> -->
                             <select class="mb-3 custom-select dropdownSelector" formControlName="code" #code
                                 (change)="onCode(code.value)">
-
                                 <option selected value='Select Country'>Select Country</option>
-                                <!-- <option value="India  (+91)" >India (+91) </option> -->
-                                <!-- <option value="USA (+1)">USA (+1) </option> -->
-
                                 <option *ngFor="let code of ['India (+91)','USA (+1)' ]" value={{code}}>
                                     {{code}}
-
                                 </option>
-                                <!-- <option selected value=''>Select Country</option> -->
                             </select>
                             <input type="number" class="" id="phno" formControlName="phNo">
                             <span *ngIf="!studentForm.get('phNo')?.valid && studentForm.get('phNo')?.touched"

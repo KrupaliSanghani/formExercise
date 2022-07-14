@@ -2,7 +2,7 @@ import { getLocaleDateFormat } from '@angular/common';
 import { Component,  OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, NgForm, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { noop, Subscription } from 'rxjs';
 import { StudentInfoService } from '../student-info.service';
 // import { UsernameValidator } from '../username.validator';  
 
@@ -82,28 +82,40 @@ export class AddStudentComponent implements OnInit {
         semester: this.editedItem.semester,
 condition: this.editedItem.condition,
 code: this.editedItem.code
-
        });
-
-       this.studentForm.get('phNo').valueChanges.subscribe((phNo) => {
-        if (this.editedItem.code == 'USA (+1)') {
-
-          this.studentForm.get('phNo')
-            .setValidators([
-              Validators.required,
-              Validators.pattern('^((\\+1-?)|0)?[0-9]{12}$'),
-            ]);
-        } else  if(this.editedItem.code == 'India (+91)'){
-          
-           this.studentForm.get('phNo')
-            .setValidators([
-              Validators.required,
-              Validators.pattern('^((\\+91-?)|0)?[0-9]{10}$'),
-            ]);
-        }
-      });
       
 
+// --phone no. validation--
+      //  console.log('abc');
+
+
+      // (this.editedItem.code == 'USA (+1)') ? (  this.studentForm.get('phNo')
+      // .setValidators([
+      //   Validators.required,
+      //   Validators.pattern('^((\\+1-?)|0)?[0-9]{12}$'),
+      // ])) : ( (this.editedItem.code == 'India (+91)') ? ( this.studentForm.get('phNo')
+      // .setValidators([
+      //   Validators.required,
+      //   Validators.pattern('^((\\+91-?)|0)?[0-9]{10}$'),
+      // ])));
+     
+         if (this.editedItem.code == 'USA (+1)') {
+ 
+           this.studentForm.get('phNo')
+             .setValidators([
+               Validators.required,
+               Validators.pattern('^((\\+1-?)|0)?[0-9]{12}$'),
+             ]);
+         } else  if(this.editedItem.code == 'India (+91)'){
+           
+            this.studentForm.get('phNo')
+             .setValidators([
+               Validators.required,
+               Validators.pattern('^((\\+91-?)|0)?[0-9]{10}$'),
+             ]);
+         }
+      
+// --edit subject name & marks--
         console.log(this.editedItem.subject);
         let editedMark = (this.editedItem.subject).map((e) => e.marks);
         let editedSub = (this.editedItem.subject).map((e) => e.subjectName)
@@ -138,7 +150,7 @@ code: this.editedItem.code
 //   ]);
 
 
-    this.onCode(this.code);
+    // this.onCode(this.code);
   }
 
   getToday(): string{
@@ -147,6 +159,18 @@ code: this.editedItem.code
 
 
   onCode(code) {
+
+ 
+
+    if(this.editMode){
+
+      this.studentForm.patchValue({
+        phNo: ''
+      })
+
+    }
+
+
     this.code = code;
     this.studentForm.get('phNo').valueChanges.subscribe((phNo) => {
       if (code == 'USA (+1)') {
