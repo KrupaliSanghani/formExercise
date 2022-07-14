@@ -24,7 +24,7 @@ export class AddStudentComponent implements OnInit {
   // num: number;
   // studentInfo = {};
   student = [];
-  code;
+  code: string;
   
 
 // --country Array
