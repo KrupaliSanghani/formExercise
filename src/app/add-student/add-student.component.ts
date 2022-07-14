@@ -1,5 +1,6 @@
 import { Component,  OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, NgForm, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { StudentInfoService } from '../student-info.service';
 // import { UsernameValidator } from '../username.validator';  
@@ -14,37 +15,36 @@ export class AddStudentComponent implements OnInit {
 
   studentForm: FormGroup;
   editMode: boolean = false;
-  editedItemIndex: number;
+  // editedItemIndex: number;
   editedItem;
   subscription: Subscription;
   // editedItem;
   // subject = [];
   // num: number;
-  studentInfo = {};
+  // studentInfo = {};
   student = [];
-  avg: number;
-  grade : string;
-  en: number = Math.floor(100000000000 + Math.random() * 9000);
-
+  
 
 // --country Array
   countryCodeArr = [
     { country: 'India', code: '+91' },
     { country: 'USA', code: '+1' }
   ];
-  mark: any;
+  // mark: any;
 
 
 
-  constructor(private stu: StudentInfoService, private fb: FormBuilder) {}
+  constructor(private stu: StudentInfoService, private fb: FormBuilder, private router: Router ) {}
 
   
   ngOnInit(): void {
 
     this.studentForm = new FormGroup({
-      name: new FormControl(null, [Validators.required,Validators.pattern('^[a-zA-Z]*')]),
+     
+      name: new FormControl(null, [Validators.required,Validators.pattern('^([a-z]+[,.]?[ ]?|-]?)+$')]),
+      
       email: new FormControl(null, [Validators.required, Validators.email]),
-      phNo: new FormControl(null, Validators.required),
+      phNo: new FormControl(null, [Validators.required, Validators.pattern('^((\\+91-?)|0)?[0-9]{10}$')]),
       dob: new FormControl(null, [Validators.required]),
       gender: new FormControl(null, Validators.required),
       subNo : new FormControl(null, Validators.required),
@@ -53,18 +53,17 @@ export class AddStudentComponent implements OnInit {
       condition: new FormControl(null, Validators.required),
     });
 
-
-    // --delete data--
-    this.stu.deletedData.subscribe((e) => {
+   
+ // --edit data--
+   
+    this.stu.dataChanged.subscribe((e) => {
       this.student = e;
       console.log(this.student);
     })
-    console.log(this.stu.deletedData);
-
-
-    // --edit data--
+    
     this.stu.editMode.subscribe((e) => this.editMode = e);
-    this.stu.index.subscribe( index => { this.editedItemIndex= index;});
+
+
   this.subscription =  this.stu.startedEditing.subscribe(
     (val) => {
       //  this.editMode = true;
@@ -80,26 +79,24 @@ export class AddStudentComponent implements OnInit {
         dob: this.editedItem.dob,
         gender: this.editedItem.gender,
         subNo: this.editedItem.subNo,
-        semester: this.editedItem.semester
-
+        semester: this.editedItem.semester,
+condition: this.editedItem.condition
 
        });
-      }
 
+   
+      
 
-      if(this.editMode == true){
         console.log(this.editedItem.subject);
         let editedMark = (this.editedItem.subject).map((e) => e.marks);
         let editedSub = (this.editedItem.subject).map((e) => e.subjectName)
-
-        // subNo
         
         for(let i=0; i <= (this.editedItem.subNo)-1; i++){
           console.log(editedMark[i]);
           console.log(editedSub[i]);
         (<FormArray>this.studentForm.get('subject')).push(
           new FormGroup({
-            subjectName: new FormControl(editedSub[i], [Validators.required,Validators.pattern('^[a-zA-Z]*')]),
+            subjectName: new FormControl(editedSub[i], [Validators.required,Validators.pattern('^[a-zA-Z0-9]+( [a-zA-Z0-9_]+)*$')]),
             marks: new FormControl(editedMark[i], [Validators.required,Validators.pattern('^0*(?:[1-9][0-9]?|100)$')]),
           })
         )
@@ -120,9 +117,10 @@ export class AddStudentComponent implements OnInit {
 
   onSubmit() {
 
-    // this.mark = (this.studentForm.get('subject').value).map((e) => e.marks);
-    // let m = this.mark.value
-    // console.log(this.mark);
+   let studentInfo = {};
+   let avg: number;
+   let grade: string;
+   let en = Math.floor(100000000000 + Math.random() * 9000);
 
 // --for marks--
     let sum = 0;
@@ -134,27 +132,27 @@ export class AddStudentComponent implements OnInit {
       }
 
       // --average of marks--
-       this.avg = sum/(this.studentForm.get('subject').value).map((e) => e.marks).length;
-      console.log(this.avg);
+       avg = sum/(this.studentForm.get('subject').value).map((e) => e.marks).length;
+      console.log(avg);
     }
 
 // --grade--
-if(this.avg >= 80 && this.avg <= 100){
-  this.grade = 'A';
-}else if(this.avg >= 70 && this.avg < 80){
-  this.grade = 'B';
-}else if(this.avg >= 60 && this.avg < 70){
-  this.grade = 'C';
-}else if(this.avg >= 50 && this.avg < 60){
-  this.grade = 'D';
-}else if(this.avg >=33 && this.avg < 50){
-  this.grade = 'E';
-}else if(this.avg >= 0 && this.avg < 33){
-  this.grade = 'F';
+if(avg >= 80 && avg <= 100){
+  grade = 'A';
+}else if(avg >= 70 && avg < 80){
+  grade = 'B';
+}else if(avg >= 60 && avg < 70){
+  grade = 'C';
+}else if(avg >= 50 && avg < 60){
+  grade = 'D';
+}else if(avg >=33 && avg < 50){
+  grade = 'E';
+}else if(avg >= 0 && avg < 33){
+  grade = 'F';
 }
 
-this.studentInfo = {
-  enid:this.en,
+studentInfo = {
+  enid:en,
   name: this.studentForm.get('name').value,
   email: this.studentForm.get('email').value,
   phNo: this.studentForm.get('phNo').value,
@@ -162,18 +160,19 @@ this.studentInfo = {
   gender: this.studentForm.get('gender').value,
   semester: this.studentForm.get('semester').value,
   subject: this.studentForm.get('subject').value,
-  grade: this.grade,
-  subNo: this.studentForm.get('subNo').value
+  grade: grade,
+  subNo: this.studentForm.get('subNo').value,
+  condition: this.studentForm.get('condition').value
  }
  
- console.log(this.studentInfo);
+ console.log(studentInfo);
 
 
 
 
 if(this.editMode == true){
 
-  this.student[this.editedItemIndex]=this.studentInfo;
+  this.student[this.student.indexOf(this.editedItem)]=studentInfo;
 this.stu.dataChanged.next(this.student);
 
   console.log(this.editMode);
@@ -183,13 +182,14 @@ this.stu.dataChanged.next(this.student);
   // this.editMode = false;
 }
 else if(this.editMode == false){
-  this.student.push(this.studentInfo);
+  this.student.push(studentInfo);
   console.log(this.student);
   this.stu.dataChanged.next(this.student);
  
   this.studentForm.reset();
   this.editMode = false;
 }
+this.router.navigate(['list']);
   
   }
 
@@ -201,7 +201,7 @@ else if(this.editMode == false){
       for (let i = 1; i <= val; i++) {
         (<FormArray>this.studentForm.get('subject')).push(
           new FormGroup({
-            subjectName: new FormControl(null, [Validators.required,Validators.pattern('^[a-zA-Z]*')]),
+            subjectName: new FormControl(null, [Validators.required,Validators.pattern('^[a-zA-Z0-9]+( [a-zA-Z0-9_]+)*$')]),
             marks: new FormControl(null, [Validators.required,Validators.pattern('^0*(?:[1-9][0-9]?|100)$')]),
           })
         );
@@ -224,7 +224,7 @@ else if(this.editMode == false){
             Validators.required,
             Validators.pattern('^((\\+1-?)|0)?[0-9]{12}$'),
           ]);
-      } else {
+      } else if(code == 'India'){
         this.studentForm
           .get('phNo')
           .setValidators([

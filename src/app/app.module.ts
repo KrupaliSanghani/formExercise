@@ -7,7 +7,8 @@ import { HeaderComponent } from './header/header.component';
 import { AddStudentComponent } from './add-student/add-student.component';
 import { ListStudentComponent } from './list-student/list-student.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { FilterPipe } from './filter.pipe';
+// import { FilterPipe } from './filter.pipe';
+import { Ng2SearchPipeModule } from 'ng2-search-filter';
 // import { UsernameValidator } from './username.validator';
 
 @NgModule({
@@ -16,13 +17,13 @@ import { FilterPipe } from './filter.pipe';
     HeaderComponent,
     AddStudentComponent,
     ListStudentComponent,
-    FilterPipe
+    // FilterPipe
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     ReactiveFormsModule,
-    FormsModule
+    FormsModule,Ng2SearchPipeModule
   ],
   providers: [],
   bootstrap: [AppComponent]

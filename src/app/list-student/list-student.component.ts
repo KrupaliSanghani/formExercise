@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { StudentInfoService } from '../student-info.service';
 
@@ -25,7 +26,7 @@ export class ListStudentComponent implements OnInit {
   displayArr = [];
   private subscription: Subscription;
 
-  constructor(private stu: StudentInfoService ) { }
+  constructor(private stu: StudentInfoService, private router: Router ) { }
 
   ngOnInit(): void {
    
@@ -49,13 +50,13 @@ console.log(this.displayArr);
 
 
 // --for edit
-  onEdit(i,val){
+  onEdit(val){
     console.log(val);
     this.editMode = true
     this.stu.editMode.next(this.editMode)
     this.stu.startedEditing.next(val);
-    this.stu.index.next(i);
-    this.editMode=false;
+   
+    this.router.navigate(['add'])
   }
 
   // --for delete
@@ -67,10 +68,10 @@ for (var i = 0; i < this.displayArr.length; i++) {
     this.displayArr.splice(i, 1);
   }
 }
-// this.displayArr.splice(val,1);
+
 this.stu.dataChanged.next(this.displayArr);
 console.log(this.displayArr.length);
-this.stu.deletedData.next(this.displayArr);
+// this.stu.startedEditing.next(this.displayArr);
 
   }
 
