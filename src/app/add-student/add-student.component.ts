@@ -135,20 +135,6 @@ code: this.editedItem.code
     }
   );
 
-//   this.studentForm
-//   .get('phNo')
-//   .setValidators([
-//     Validators.required,
-//     Validators.pattern('^((\\+1-?)|0)?[0-9]{12}$'),
-//   ]);
-// } else if(code == 'India'){
-// this.studentForm
-//   .get('phNo')
-//   .setValidators([
-//     Validators.required,
-//     Validators.pattern('^((\\+91-?)|0)?[0-9]{10}$'),
-//   ]);
-
 
     // this.onCode(this.code);
   }
@@ -162,13 +148,13 @@ code: this.editedItem.code
 
  
 
-    if(this.editMode){
+    // if(this.editMode){
 
       this.studentForm.patchValue({
         phNo: ''
       })
 
-    }
+    // }
 
 
     this.code = code;
